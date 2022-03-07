@@ -1,9 +1,9 @@
 <template>
-  <div><button v-on="animate">旋转</button></div>
+  <div><button @click="pause">暂停/继续</button></div>
 </template>
 <script>
 import * as THREE from 'three'
-import {camera, scene, renderer} from '../commons/base'
+import {camera, scene, renderer,mixers} from '../commons/base'
 import {ambientLight,pointLight} from '../commons/light'
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import {gridHelper,arrowHelper_x,arrowHelper_y,arrowHelper_z} from '../commons/helper'
@@ -12,9 +12,14 @@ export default {
   setup() {
     var mouse = new THREE.Vector2()
     var obj = null
+    var action = null
+    var clock = new THREE.Clock();
     const init = async ()=>{
-      // box()
-     obj = await test()
+      // obj = await box()
+      var Test = await test()
+      obj = Test.obj
+      action = Test.action
+      action.play()
       scene.add(ambientLight())
       scene.add(pointLight())
       scene.add(arrowHelper_x())
@@ -44,14 +49,31 @@ export default {
 
     var animate = () => {
       requestAnimationFrame(animate);
-      obj.rotation.y += 0.01;
+      // obj.rotation.z += 0.05;
+      // if(!!obj && obj.position.z !== 0){
+      //           obj.position.z += 1;
+      // }
+      if ( mixers.length > 0 ) {
+          for ( var i = 0; i < mixers.length; i ++ ) {
+              mixers[ i ].update( clock.getDelta() );
+          }
 
+      }
       renderer.render(scene, camera);
     };
+    var pause = ()=>{
+      if(action.paused){
+        action.paused = false
+      } else {
+         action.paused = true
+      }
+    }
+  
      init()
     return {
       animate,
       render,
+      pause
     }
 
   },

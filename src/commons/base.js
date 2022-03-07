@@ -34,11 +34,12 @@ const r = () => {
 
     return renderer;
 }
-var renderer = r(), scene= s(), camera = c(),loader = new FBXLoader()
+var renderer = r(), scene= s(), camera = c(),loader = new FBXLoader(),mixers=[]
 
 export {
     renderer,
     scene,
     camera,
-    loader
+    loader,
+    mixers
 }
