@@ -1,0 +1,120 @@
+<!--
+ * @Description: 
+ * @Author: single
+ * @Date: 2018-12-18 16:48:52
+ * @LastEditTime: 2019-09-06 23:38:41
+ * @LastEditors: kai
+ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/three.js"></script>
+    <script src="js/tween.js"></script>
+    <script src="js/stats.js"></script>
+    <script src="js/FBXLoader.js"></script>
+    <script src="js/inflate.min.js"></script>
+    <style type="text/css">
+
+    </style>
+    <SCRIPT>
+        var renderer;
+        var width;
+        var height;
+        var camera;
+        var scene;
+        var mixers = [];
+        var ob;
+        var clock = new THREE.Clock();
+
+        function init(){
+            width = window.innerWidth;
+            height = window.innerHeight;
+            console.log(width + " " + height);
+            renderer = new THREE.WebGLRenderer()
+            {
+                antialias : true
+            }
+            renderer.setSize(width, height);
+            renderer.setClearColor(0xffffff,1);
+            document.body.appendChild(renderer.domElement);
+
+            scene = new THREE.Scene();
+
+            camera = new THREE.PerspectiveCamera(60,width/height,1,10000);
+            camera.position.set(10,10,30);
+            camera.lookAt(0,0,0);
+
+            var light = new THREE.DirectionalLight(0xffffff);
+            light.position.set(20,50,30);
+            scene.add(light);
+
+            //一个简单的背景图，调整position就ok
+           /* var texture = new THREE.TextureLoader();
+            texture.load("img/yz.png",function (texture) {
+                var background = new THREE.Mesh(new THREE.PlaneGeometry(800,600,20),new THREE.MeshLambertMaterial({map:texture}))
+                background.position.set(0,0,-300);
+                scene.add( background );
+            });*/
+
+            var loader = new THREE.FBXLoader();
+			//可以在这里更换fbx试试其他效果
+            loader.load( 'fbx/Naruto.fbx', function ( object ) {
+                object.mixer = new THREE.AnimationMixer(object);
+                mixers.push(object.mixer);
+
+                var action = object.mixer.clipAction(object.animations[0]);
+                action.play();
+
+                /* object.traverse( function ( child ) {
+
+                     if ( child.isMesh ) {
+
+                         child.castShadow = true;
+                         child.receiveShadow = true;
+
+                     }
+
+                 } );*/
+                object.position.y = 0;
+                object.position.z = -200;
+                object.rotateY(45);
+                object.scale.set(.5,.5,.5);
+                ob = object;
+                scene.add(object);
+            });
+
+            window.addEventListener("resize",onWindowResize,false);
+        }
+
+        function onWindowResize(){
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize( window.innerWidth, window.innerHeight );
+        }
+		
+		//动画
+        function animotion() {
+            requestAnimationFrame(animotion);
+            if(!!ob && ob.position.z !== 0){
+                ob.position.z += 1;
+            }
+            if ( mixers.length > 0 ) {
+                for ( var i = 0; i < mixers.length; i ++ ) {
+                    mixers[ i ].update( clock.getDelta() );
+                }
+
+            }
+            renderer.render(scene,camera);
+        }
+        function start() {
+            init();
+            animotion();
+        }
+    </SCRIPT>
+</head>
+<body onload="start()">
+</body>
+</html>

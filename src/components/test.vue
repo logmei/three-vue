@@ -1,5 +1,5 @@
 <template>
-  <div><button @click="pause">暂停/继续</button></div>
+  <div></div>
 </template>
 <script>
 import * as THREE from 'three'
@@ -7,19 +7,23 @@ import {camera, scene, renderer,mixers} from '../commons/base'
 import {ambientLight,pointLight} from '../commons/light'
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import {gridHelper,arrowHelper_x,arrowHelper_y,arrowHelper_z} from '../commons/helper'
-import {box,test} from '../commons/models/test'
+import {test} from '../commons/models/test'
+import {basicMaterial,pointMaterial,lineMaterial,dashedLineMaterial} from '../commons/models/material'
+import {shadow_spotlight} from '../commons/models/lights'
 export default {
   setup() {
     var mouse = new THREE.Vector2()
     var obj = null
+    var radians = 0
     var action = null
     var clock = new THREE.Clock();
     const init = async ()=>{
       // obj = await box()
       var Test = await test()
-      obj = Test.obj
-      action = Test.action
-      action.play()
+      obj = Test.object
+      // geometryCustom()
+      basicMaterial()
+      shadow_spotlight()
       scene.add(ambientLight())
       scene.add(pointLight())
       scene.add(arrowHelper_x())
@@ -28,6 +32,8 @@ export default {
       scene.add(gridHelper())
     //  console.log('obj',obj)
       renderer.render(scene, camera);
+      //告诉渲染器需要阴影效果
+      
       document.body.appendChild(renderer.domElement);
       var controls = new OrbitControls(camera, renderer.domElement);
       controls.update();
@@ -46,34 +52,26 @@ export default {
 		mouse.x = (event.clientX / window.innerWidth) * 2 - 1
 		mouse.y = (event.clientY/window.innerHeight) *2 + 1
 	};
+  // var axis = new THREE.Vector3(1,0,0).normalize()
 
     var animate = () => {
       requestAnimationFrame(animate);
-      // obj.rotation.z += 0.05;
+      // obj.rotateY(Math.PI/6)
+      // obj.rotateOnAxis(axis,radians)
+      // radians = radians+0.05
+      // obj.rotation.x += 0.05;
       // if(!!obj && obj.position.z !== 0){
-      //           obj.position.z += 1;
+      //    obj.rotation.z += 0.05;
       // }
-      if ( mixers.length > 0 ) {
-          for ( var i = 0; i < mixers.length; i ++ ) {
-              mixers[ i ].update( clock.getDelta() );
-          }
-
-      }
+     
       renderer.render(scene, camera);
     };
-    var pause = ()=>{
-      if(action.paused){
-        action.paused = false
-      } else {
-         action.paused = true
-      }
-    }
+   
   
      init()
     return {
       animate,
       render,
-      pause
     }
 
   },

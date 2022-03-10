@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {camera, scene, renderer} from './base'
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-const arrowHelper_x = ()=>arrowHelper(1,0,0,0xffff00,300)
+const arrowHelper_x = ()=>arrowHelper(1,0,0,0xfff000,300)
 const arrowHelper_y = ()=>arrowHelper(0,1,0,0xff0000,100)
 const arrowHelper_z = ()=>arrowHelper(0,0,1,0x2edd0f,100)
  // 箭头辅助
